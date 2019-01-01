@@ -1,0 +1,25 @@
+{
+  "name": "property-watch-decorator",
+  "version": "1.0.0",
+  "description": "A decorator for watching property change",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhaosiyang/property-watch-decorator.git"
+  },
+  "keywords": ["property", "watch", "change", "subscribe", "Angular", "decorator", "TypeScript", "setter"],
+  "author": "Siyang Kern Zhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zhaosiyang/property-watch-decorator/issues"
+  },
+  "homepage": "https://github.com/zhaosiyang/property-watch-decorator#readme",
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
+  "files": ["lib/**/*"]
+}
