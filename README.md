@@ -6,7 +6,10 @@
 ### Example 1 (General)
 ```typescript
 class PersonComponent {
-    @OnChange(function(value) {console.log('name is changed to: ', value);})  
+    // optional "change" parameter
+    @OnChange(function(value, change: SimpleChange) {
+        console.log(`name is changed from ${change.previousValue} to ${value}`);
+    })  
     name: string;
 }
 ```
@@ -23,7 +26,7 @@ export class MyComponent {
     })
     property1: any;
     
-    @OnChange(function(value) {
+    @OnChange(function(value, change) {
         console.log('property2 is changed to', value)
     })
     @Input()  // can be combined with @Input()
