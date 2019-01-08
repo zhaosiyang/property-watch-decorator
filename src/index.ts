@@ -11,6 +11,10 @@ export function OnChange<T = any>(callback: (value: T, simpleChange?: SimpleChan
     return (target: any, key: PropertyKey) => {
         Object.defineProperty(target, key, {
             set: function (value) {
+                // No operation if new value is same as old value
+                if (!_isFirstChange && _cachedValue === value) {
+                    return;
+                }
                 const oldValue = _cachedValue;
                 _cachedValue = value;
                 const simpleChange: SimpleChange<T> = {
