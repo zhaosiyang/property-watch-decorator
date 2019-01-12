@@ -6,28 +6,33 @@ export interface SimpleChange<T> {
 }
 
 export function OnChange<T = any>(callback: (value: T, simpleChange?: SimpleChange<T>) => void) {
-    let _cachedValue: T;
-    let _isFirstChange = true;
+    const cachedValueKey = Symbol();
+    const isFirstChangeKey = Symbol();
     return (target: any, key: PropertyKey) => {
         Object.defineProperty(target, key, {
             set: function (value) {
+                // change status of "isFirstChange"
+                if (this[isFirstChangeKey] === undefined) {
+                    this[isFirstChangeKey] = true;
+                } else {
+                    this[isFirstChangeKey] = false;
+                }
                 // No operation if new value is same as old value
-                if (!_isFirstChange && _cachedValue === value) {
+                if (!this[isFirstChangeKey] && this[cachedValueKey] === value) {
                     return;
                 }
-                const oldValue = _cachedValue;
-                _cachedValue = value;
+                const oldValue = this[cachedValueKey];
+                this[cachedValueKey] = value;
                 const simpleChange: SimpleChange<T> = {
-                    firstChange: _isFirstChange,
+                    firstChange: this[isFirstChangeKey],
                     previousValue: oldValue,
-                    currentValue: _cachedValue,
-                    isFirstChange: () => _isFirstChange,
+                    currentValue: this[cachedValueKey],
+                    isFirstChange: () => this[isFirstChangeKey],
                 };
-                _isFirstChange = false;
-                callback.call(this, _cachedValue, simpleChange);
+                callback.call(this, this[cachedValueKey], simpleChange);
             },
             get: function () {
-                return _cachedValue;
+                return this[cachedValueKey];
             },
         });
     };
