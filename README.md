@@ -1,36 +1,47 @@
 # Property Watch Decorator
 
-### Install
-```npm install property-watch-decorator --save```
+#### This package provides a `@OnChange` decorator that can be easily used to listen to changes of class properties.
 
-### Example 1 (General)
+##### I have a [talk at ng-conf 2019](https://www.youtube.com/watch?v=rVDMmlCRvkg&list=PLOETEcp3DkCpimylVKTDe968yNmNIajlR&index=22) about why this package is useful and how I implement this package.
+
+### Install
+```npm install property-watch-decorator```
+
+### Example 1
 ```typescript
 class PersonComponent {
-    // optional "change" parameter
-    @OnChange(function(value, change: SimpleChange) {
+    // Parameter value is inferred as any
+    // Parameter change is optional, and inferred as SimpleChange<any>
+    @OnChange(function(value, change) {
         console.log(`name is changed from ${change.previousValue} to ${value}`);
     })  
     name: string;
 }
 ```
 
-### Example 2 (Angular)
-
+### Example 2, use generics, better typing
 ```typescript
-@Component({
-    ...
-})
-export class MyComponent {
-    @OnChange(function(value) {
-        console.log('property1 is changed to', value);
-    })
-    property1: any;
+class PersonComponent {
+    // Parameter value is inferred as string
+    // Parameter change is optional, and inferred as SimpleChange<string>
+    @OnChange<string>(function(value, change) {
+        console.log(`name is changed from ${change.previousValue} to ${value}`);
+    })  
+    name: string;
+}
+```
+
+### Example 3, type `this` if you want to access other member of the class (just for better IDE integration)
+```typescript
+class PersonComponent {
+ 
+    @OnChange<string>(function(this: PersonComponent, value, change) {
+        console.log(`name is changed from ${change.previousValue} to ${value}`);
+        console.log(`At the moment, age is ${this.age}`)
+    })  
+    name: string;
     
-    @OnChange(function(value, change) {
-        console.log('property2 is changed to', value)
-    })
-    @Input()  // can be combined with @Input()
-    property2: any;
+    age: number;
 }
 ```
 
@@ -47,7 +58,8 @@ class MyComponent {
   property1: any;
 }
 ```
-To correct this, you just need to change arrow function to es5 function:
+#### Correct way
+Change arrow function to es5 function:
 ```typescript
 class MyComponent {
   @OnChange(function(value) {
@@ -73,15 +85,14 @@ class MyComponent {
 }
 
 ```
-Correct way
+#### Correct way
 ```typescript
 class MyComponent {
   @OnChange(someFunction)
-  property1: any;
+  property1;
 }
 function someFunction(value) {
     console.log(`property1 is changed to ${value}`);
-    console.log(this.property1)   
 }
 
 ```
