@@ -5,18 +5,21 @@ export interface SimpleChange<T> {
     isFirstChange: () => boolean;
 }
 
-export function OnChange<T = any>(callback: (value: T, simpleChange?: SimpleChange<T>) => void) {
+export function OnChange<T = any>(callback: ((value: T, simpleChange?: SimpleChange<T>) => void) | string) {
     const cachedValueKey = Symbol();
     const isFirstChangeKey = Symbol();
+
+    const isFunction = (fn: any) => fn.constructor === Function;
+
     return (target: any, key: PropertyKey) => {
         Object.defineProperty(target, key, {
             set: function (value) {
+
+                const callBackFn = (isFunction(callback) ? callback : target[callback as string]) as Function;
+
                 // change status of "isFirstChange"
-                if (this[isFirstChangeKey] === undefined) {
-                    this[isFirstChangeKey] = true;
-                } else {
-                    this[isFirstChangeKey] = false;
-                }
+                this[isFirstChangeKey] = this[isFirstChangeKey] === undefined;
+                
                 // No operation if new value is same as old value
                 if (!this[isFirstChangeKey] && this[cachedValueKey] === value) {
                     return;
@@ -29,7 +32,7 @@ export function OnChange<T = any>(callback: (value: T, simpleChange?: SimpleChan
                     currentValue: this[cachedValueKey],
                     isFirstChange: () => this[isFirstChangeKey],
                 };
-                callback.call(this, this[cachedValueKey], simpleChange);
+                callBackFn.call(this, this[cachedValueKey], simpleChange);
             },
             get: function () {
                 return this[cachedValueKey];
