@@ -54,7 +54,7 @@ class PersonComponent {
     
     age: number;
 
-    onNameChange(this: PersonComponent, value, change) {
+    onNameChange(value, change) {
       console.log(`name is changed from ${change.previousValue} to ${value}`);
       console.log(`At the moment, age is ${this.age}`);
     }
