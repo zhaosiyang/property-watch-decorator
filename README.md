@@ -45,7 +45,7 @@ class PersonComponent {
 }
 ```
 
-### Example 4, using class method reference for onChange
+### Example 4, using class method reference for onChange (No need to type `this` as in example 3)
 ```typescript
 class PersonComponent {
  
@@ -101,12 +101,28 @@ class MyComponent {
 }
 
 ```
-#### Correct way
+#### Correct way 1
+```typescript
+class MyComponent {
+  @OnChange('someFunction')
+  property1;
+  
+  someFunction(value) {
+      console.log(`property1 is changed to ${value}`);
+  }
+  
+}
+
+```
+
+
+#### Correct way 2
 ```typescript
 class MyComponent {
   @OnChange(someFunction)
   property1;
 }
+
 function someFunction(value) {
     console.log(`property1 is changed to ${value}`);
 }

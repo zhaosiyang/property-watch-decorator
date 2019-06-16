@@ -5,33 +5,27 @@ export interface SimpleChange<T> {
   isFirstChange: () => boolean;
 }
 
-export function OnChange<T = any>(callback: ((value: T, simpleChange?: SimpleChange<T>) => void) | string) {
+export type CallBackFunction<T> = (value: T, change?: SimpleChange<T>) => void;
+
+export function OnChange<T = any>(callback: CallBackFunction<T> | string) {
+
   const cachedValueKey = Symbol();
   const isFirstChangeKey = Symbol();
 
-  const isFunction = (fn) => fn.constructor === Function;
-
-  const isValidFunction = (fn: Function, fnName: string): Function => {
-    if (!fn) {
-      throw new Error(`${fnName} is not a valid function`);
-    }
-    return fn;
-  };
-
   return (target: any, key: PropertyKey) => {
-      
-    const callBackFn = (
-      isFunction(callback) ?
-        callback :
-        isValidFunction(target[callback as string], callback as string)
-    ) as Function;
+
+    const callBackFn: CallBackFunction<T> = typeof callback === 'string' ? target[callback] : callback;
+    if (!callBackFn) {
+      throw new Error(`Cannot find method ${callback} in class ${target.constructor.name}`);
+    }
 
     Object.defineProperty(target, key, {
       set: function (value) {
+
         // change status of "isFirstChange"
         this[isFirstChangeKey] = this[isFirstChangeKey] === undefined;
-        // No operation if new value is same as old value
 
+        // No operation if new value is same as old value
         if (!this[isFirstChangeKey] && this[cachedValueKey] === value) {
           return;
         }
