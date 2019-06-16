@@ -45,6 +45,22 @@ class PersonComponent {
 }
 ```
 
+### Example 4, using class method reference for onChange
+```typescript
+class PersonComponent {
+ 
+    @OnChange<string>('onNameChange')  
+    name: string;
+    
+    age: number;
+
+    onNameChange(value, change) {
+      console.log(`name is changed from ${change.previousValue} to ${value}`);
+      console.log(`At the moment, age is ${this.age}`);
+    }
+}
+```
+
 ### Important notes: 
 #### PITFALL 1
 Arrow function should be avoided as this would make the function lose context. In this case, `this` would NOT refer to class instance but `undefined`
